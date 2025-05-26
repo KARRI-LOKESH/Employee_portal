@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<div class="container mt-5">
+  <h2>Employee Search Results</h2>
+
+ <form method="get" class="form-row align-items-end mb-4">
+
+  <div class="form-group col-md-2">
+    <label for="employee_id">Employee ID</label>
+    <input type="text" name="employee_id" value="{{ request.GET.employee_id }}" class="form-control" placeholder="EMP00001">
+  </div>
+
+  <div class="form-group col-md-2">
+    <label for="first_name">First Name</label>
+    <input type="text" name="first_name" value="{{ request.GET.first_name }}" class="form-control" placeholder="First name">
+  </div>
+
+  <div class="form-group col-md-2">
+    <label for="last_name">Last Name</label>
+    <input type="text" name="last_name" value="{{ request.GET.last_name }}" class="form-control" placeholder="Last name">
+  </div>
+
+  <div class="form-group col-md-2">
+    <label for="login_id">Login ID</label>
+    <input type="text" name="login_id" value="{{ request.GET.login_id }}" class="form-control" placeholder="Login ID">
+  </div>
+<div class="form-group col-md-4">
+  <label for="dob_start">Date of Birth (From - To)</label>
+  <div class="d-flex">
+    <input type="date" name="dob_start" id="dob_start" value="{{ request.GET.dob_start }}" class="form-control mr-2">
+    <input type="date" name="dob_end" id="dob_end" value="{{ request.GET.dob_end }}" class="form-control">
+  </div>
+</div>
+
+
+  <div class="form-group col-md-2">
+    <label for="department">Department</label>
+    <input type="text" name="department" value="{{ request.GET.department }}" class="form-control" placeholder="Department">
+  </div>
+
+  <div class="form-group col-md-2">
+    <button type="submit" class="btn btn-primary btn-block mt-4">Filter</button>
+  </div>
+
+</form>
+
+  <form method="post" action="{% url 'employee_bulk_delete' %}" id="bulkDeleteForm">
+    {% csrf_token %}
+    <table class="table table-bordered table-hover">
+      <thead class="thead-dark">
+        <tr>
+          <th><input type="checkbox" id="selectAll"></th>
+          <th>Employee ID</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Login ID</th>
+          <th>Date of Birth</th>
+          <th>Department</th>
+          <th>Salary</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for emp in page_obj %}
+        <tr>
+          <td><input type="checkbox" name="selected_employees" value="{{ emp.id }}"></td>
+          <td><a href="{% url 'employee_detail' emp.id %}">{{ emp.employee_id }}</a></td>
+          <td>{{ emp.first_name }}</td>
+          <td>{{ emp.last_name }}</td>
+          <td>{{ emp.login_id }}</td>
+          <td>{{ emp.date_of_birth }}</td>
+          <td>{{ emp.department }}</td>
+          <td>{{ emp.salary }}</td>
+          <td>
+            <div class="dropdown">
+  <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Actions
+  </button>
+  <div class="dropdown-menu">
+    <a class="dropdown-item" href="{% url 'employee_detail' emp.id %}">View</a>
+    <a class="dropdown-item" href="{% url 'employee_edit' emp.id %}">Edit</a>
+    <a class="dropdown-item" href="{% url 'employee_delete' emp.id %}">Delete</a>
+    <a class="dropdown-item" href="{% url 'employee_history' emp.id %}">History</a>
+  </div>
+</div>
+
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <button type="submit" class="btn btn-danger">Delete Selected</button>
+  </form>
+<br>
+
+  <nav>
+    <ul class="pagination">
+      {% if page_obj.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        </li>
+      {% endif %}
+      <li class="page-item active">
+        <span class="page-link">{{ page_obj.number }}</span>
+      </li>
+      {% if page_obj.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+        </li>
+      {% endif %}
+    </ul>
+  </nav>
+</div>
+
+<script>
+  document.getElementById("selectAll").onclick = function() {
+    let checkboxes = document.getElementsByName("selected_employees");
+    for (let checkbox of checkboxes) {
+      checkbox.checked = this.checked;
+    }
+  }
+</script>
+{% endblock %}

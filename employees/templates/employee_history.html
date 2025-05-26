@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow rounded">
+    <div class="card-body">
+      <h2 class="card-title mb-4 text-primary">History for {{ employee.first_name }} {{ employee.last_name }}</h2>
+
+      <div class="mb-3">
+        <p><strong>Employee ID:</strong> {{ employee.login_id }}</p>
+        <p><strong>Date of Birth:</strong> {{ employee.date_of_birth }}</p>
+        <p><strong>Department:</strong> {{ employee.department }}</p>
+        <p><strong>Salary:</strong> ₹{{ employee.salary }}</p>
+      </div>
+
+      <h4 class="text-secondary">History Records</h4>
+      {% if history_records %}
+        <ul class="list-group">
+          {% for record in history_records %}
+            <li class="list-group-item">{{ record }}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <div class="alert alert-info mt-3">No history available.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
